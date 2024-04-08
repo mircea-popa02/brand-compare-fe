@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+
+import { Provider, defaultTheme } from "@adobe/react-spectrum";
+import { useState } from "react";
+
+import DatePicker from "./components/DatePicker";
+import Brands from "./components/Brands";
 
 function App() {
+  const [date, setDate] = useState(null);
+
+  const updateDate = (data) => {
+    console.log("Data received from child:", data);
+    setDate(data);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider theme={defaultTheme} colorScheme="light">
+      <div className="App">
+        <h1>Brand Compare</h1>
+        <DatePicker onDateChange={updateDate} />
+        <Brands date={date} />
+      </div>
+    </Provider>
   );
 }
 
