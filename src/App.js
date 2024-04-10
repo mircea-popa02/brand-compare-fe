@@ -1,16 +1,19 @@
 import "./App.css";
 
 import { Provider, defaultTheme } from "@adobe/react-spectrum";
+import { today } from "@internationalized/date";
 import { useState } from "react";
 
 import DatePicker from "./components/DatePicker";
 import Brands from "./components/Brands";
 
 function App() {
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState({
+    start: today(),
+    end: today()
+  });
 
   const updateDate = (data) => {
-    console.log("Data received from child:", data);
     setDate(data);
   };
 

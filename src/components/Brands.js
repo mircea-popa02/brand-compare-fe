@@ -8,10 +8,11 @@ import {
   Row,
   Cell,
 } from "@adobe/react-spectrum";
+import { parseDate } from "@internationalized/date";
 
 function Brands(props) {
-  const [brands, setBrands] = useState([]);
   const [date, setDate] = useState(props.date);
+  const [brandData, setBrandData] = useState([]);
 
   const columns = [
     { name: "Brand Name", uid: "name" },
@@ -20,35 +21,38 @@ function Brands(props) {
     { name: "Total Engagement", uid: "engagement" },
   ];
 
+  const convertDate = (date) => {
+    const day = date.day;
+    const month = date.month;
+    const year = date.year;
+    return new Date(year, month - 1, day).getTime();
+  }
+
   useEffect(() => {
     setDate(props.date);
-    fetch("http://localhost:5000/brands")
+    fetch("http://localhost:5000/brands?start=" + convertDate(props.date.start) + "&end=" + convertDate(props.date.end))
       .then((response) => response.json())
       .then((data) => {
-        setBrands(data.result);
-        console.log(data.result);
+        setBrandData(data);
+        console.log("Data fetched: ", data);
+      }).catch((error) => {
+        console.error("Error fetching data: ", error);
       });
-  }, []);
+  }, [props.date]);
 
   return (
     <div>
       <TableView aria-label="Example table with dynamic content">
         <TableHeader columns={columns}>
-          {(column) => (
-            <Column
-              key={column.uid}
-            >
-              {column.name}
-            </Column>
-          )}
+          {(column) => <Column key={column.uid}>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={brands}>
+        <TableBody items={brandData}>
           {(item) => (
             <Row key={item.brandname}>
               <Cell>{item.brandname}</Cell>
               <Cell>{item.profiles.length}</Cell>
-              <Cell>100</Cell>
-              <Cell>1000</Cell>
+              <Cell>{item.followers}</Cell>
+              <Cell>{item.engagement}</Cell>
             </Row>
           )}
         </TableBody>
